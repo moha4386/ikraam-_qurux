@@ -1,0 +1,120 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+abstract class Delivery {
+    protected int distance;
+    protected int weight;
+
+    public Delivery() {
+        this.distance = 0;
+        this.weight = 0;
+    }
+
+    public Delivery(int distance, int weight) {
+        this();
+        this.distance = distance;
+        this.weight = weight;
+    }
+
+    public abstract long calculateFee();
+}
+
+class RegularDelivery extends Delivery {
+
+    public RegularDelivery(int distance, int weight) {
+        super(distance, weight);
+    }
+
+    @Override
+    public long calculateFee() {
+        return 10 + 2L * distance + weight;
+    }
+}
+
+class ExpressDelivery extends Delivery {
+
+    public ExpressDelivery(int distance, int weight) {
+        super(distance, weight);
+    }
+
+    @Override
+    public long calculateFee() {
+        return 25 + 4L * distance + 2L * weight;
+    }
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner input = new Scanner(System.in);
+        ArrayList<Delivery> deliveries = new ArrayList<>();
+
+        System.out.print("How many deliveries? ");
+        int n = input.nextInt();
+
+        if (n < 1 || n > 100) {
+            System.out.println("Enter 1 to 100 deliveries.");
+            input.close();
+            return;
+        }
+
+        for (int i = 1; i <= n; i++) {
+
+            System.out.print("Delivery " + i + " - type (R/E): ");
+            char type = input.next().toUpperCase().charAt(0);
+
+            System.out.print("Delivery " + i + " - distance (km): ");
+            int distance = input.nextInt();
+
+            System.out.print("Delivery " + i + " - weight (kg): ");
+            int weight = input.nextInt();
+
+            if (distance < 1 || distance > 1000 ||
+                    weight < 1 || weight > 1000) {
+
+                System.out.println(
+                        "Distance and weight must be 1 to 1000."
+                );
+
+                input.close();
+                return;
+            }
+
+            if (type == 'R') {
+                deliveries.add(
+                        new RegularDelivery(distance, weight)
+                );
+            } else if (type == 'E') {
+                deliveries.add(
+                        new ExpressDelivery(distance, weight)
+                );
+            } else {
+                System.out.println("Invalid type. Enter R or E.");
+                input.close();
+                return;
+            }
+        }
+
+        long total = 0;
+
+        System.out.println("--- DELIVERY FEE SUMMARY ---");
+
+        for (int i = 0; i < deliveries.size(); i++) {
+
+            long fee = deliveries.get(i).calculateFee();
+
+            System.out.println(
+                    "Delivery " + (i + 1) + ": " + fee + " units"
+            );
+
+            total = total + fee;
+        }
+
+        System.out.println(
+                "Total delivery fees: " + total + " units"
+        );
+
+        input.close();
+    }
+}
